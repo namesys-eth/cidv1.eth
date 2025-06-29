@@ -10,12 +10,12 @@ import {Varint} from "../varint.sol";
  * @dev This library implements SHA-256 multihash encoding as defined in
  * the multihash specification. It provides a standardized way to encode
  * SHA-256 hashes with their multihash prefix.
- * 
+ *
  * Multihash format:
  * - First byte: hash function code (0x12 for SHA-256)
  * - Second byte: hash length (0x20 = 32 bytes for SHA-256)
  * - Remaining bytes: the actual hash digest
- * 
+ *
  * @custom:security-contact security@cidv1.eth
  * @custom:website https://cidv1.eth
  * @custom:license WTFPL.ETH

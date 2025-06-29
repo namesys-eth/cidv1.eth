@@ -129,59 +129,63 @@ contract DagCborTest is Test {
     function test_DagCborSha256() public pure {
         bytes memory data = bytes("Hello World");
         bytes memory result = DAG_CBOR.dagcborSha256(data);
-        
+
         // Expected: 0x01711220 + SHA256 hash
         assertEq(result.length, 36, "DAG-CBOR SHA256 should be 36 bytes");
         assertEq(uint256(uint8(result[0])), 0x01, "First byte should be 0x01");
         assertEq(uint256(uint8(result[1])), 0x71, "Second byte should be 0x71");
         assertEq(uint256(uint8(result[2])), 0x12, "Third byte should be 0x12");
         assertEq(uint256(uint8(result[3])), 0x20, "Fourth byte should be 0x20");
-        
+
         bytes32 expectedHash = sha256(data);
         bytes32 actualHash;
-        assembly { actualHash := mload(add(result, 36)) }
+        assembly {
+            actualHash := mload(add(result, 36))
+        }
         assertEq(actualHash, expectedHash, "Hash should match SHA256");
     }
 
     function test_DagCborKeccak256() public pure {
         bytes memory data = bytes("Hello World");
         bytes memory result = DAG_CBOR.dagcborKeccak256(data);
-        
+
         // Expected: 0x01711b20 + Keccak256 hash
         assertEq(result.length, 36, "DAG-CBOR Keccak256 should be 36 bytes");
         assertEq(uint256(uint8(result[0])), 0x01, "First byte should be 0x01");
         assertEq(uint256(uint8(result[1])), 0x71, "Second byte should be 0x71");
         assertEq(uint256(uint8(result[2])), 0x1b, "Third byte should be 0x1b");
         assertEq(uint256(uint8(result[3])), 0x20, "Fourth byte should be 0x20");
-        
+
         bytes32 expectedHash = keccak256(data);
         bytes32 actualHash;
-        assembly { actualHash := mload(add(result, 36)) }
+        assembly {
+            actualHash := mload(add(result, 36))
+        }
         assertEq(actualHash, expectedHash, "Hash should match Keccak256");
     }
 
     function test_EncodeLength() public pure {
         // Test all branches of encodeLength
         bytes memory result;
-        
+
         // Branch 1: length < 24
         result = DAG_CBOR.encodeLength(5, DAG_CBOR.CBOR_TYPE_TEXT_STRING);
         assertEq(result.length, 1, "Length < 24 should be 1 byte");
         assertEq(uint256(uint8(result[0])), 0x65, "Should be 0x60 + 5");
-        
+
         // Branch 2: length < 256
         result = DAG_CBOR.encodeLength(100, DAG_CBOR.CBOR_TYPE_TEXT_STRING);
         assertEq(result.length, 2, "Length < 256 should be 2 bytes");
         assertEq(uint256(uint8(result[0])), 0x78, "Should be 0x60 + 24");
         assertEq(uint256(uint8(result[1])), 100, "Should be the length");
-        
+
         // Branch 3: length < 65536
         result = DAG_CBOR.encodeLength(1000, DAG_CBOR.CBOR_TYPE_TEXT_STRING);
         assertEq(result.length, 3, "Length < 65536 should be 3 bytes");
         assertEq(uint256(uint8(result[0])), 0x79, "Should be 0x60 + 25");
         assertEq(uint256(uint8(result[1])), 0x03, "Should be high byte of 1000");
         assertEq(uint256(uint8(result[2])), 0xe8, "Should be low byte of 1000");
-        
+
         // Branch 4: length >= 65536
         result = DAG_CBOR.encodeLength(100000, DAG_CBOR.CBOR_TYPE_TEXT_STRING);
         assertEq(result.length, 5, "Length >= 65536 should be 5 bytes");
@@ -191,7 +195,7 @@ contract DagCborTest is Test {
     function test_EncodeCID() public pure {
         bytes memory data = hex"1234567890abcdef";
         bytes memory result = DAG_CBOR.encodeCID(data);
-        
+
         // Expected: DAG_CBOR_LINK_TAG (0xd82a) + length + 0x00 + data
         assertEq(uint256(uint8(result[0])), 0xd8, "First byte should be 0xd8");
         assertEq(uint256(uint8(result[1])), 0x2a, "Second byte should be 0x2a");
@@ -205,12 +209,12 @@ contract DagCborTest is Test {
         bytes[] memory cids = new bytes[](2);
         cids[0] = hex"1234567890abcdef";
         cids[1] = hex"fedcba0987654321";
-        
+
         bytes memory result = DAG_CBOR.arrayCbor(cids);
-        
+
         // Should start with array length encoding
         assertEq(uint256(uint8(result[0])), 0x82, "Should be array with 2 elements");
-        
+
         // Should contain two CIDs with proper encoding
         assertEq(uint256(uint8(result[1])), 0xd8, "First CID should start with 0xd8");
         assertEq(uint256(uint8(result[2])), 0x2a, "First CID should have 0x2a");
@@ -220,19 +224,19 @@ contract DagCborTest is Test {
         bytes memory data = bytes("Hello World");
         bytes[] memory links = new bytes[](1);
         links[0] = hex"1234567890abcdef";
-        
+
         // Test complete node (both data and links)
         bytes memory result = DAG_CBOR.nodeCbor(data, links);
         assertTrue(result.length > 0, "Complete node should have data");
-        
+
         // Test file node (only data, no links)
         result = DAG_CBOR.nodeCbor(data, new bytes[](0));
         assertEq(result, data, "File node should return data as-is");
-        
+
         // Test directory node (only links, no data)
         result = DAG_CBOR.nodeCbor("", links);
         assertTrue(result.length > 0, "Directory node should have data");
-        
+
         // Test empty node (should revert) - use helper contract
         NodeCborCaller helper = new NodeCborCaller();
         vm.expectRevert(abi.encodeWithSelector(DAG_CBOR.InvalidDAGCBOR.selector, "Empty node"));
@@ -243,11 +247,11 @@ contract DagCborTest is Test {
         bytes memory data = bytes("Test data");
         bytes[] memory links = new bytes[](1);
         links[0] = hex"1234567890abcdef";
-        
+
         // Test with empty data but valid links
         bytes memory result = DAG_CBOR.nodeCbor("", links);
         assertTrue(result.length > 0, "Directory node should be created");
-        
+
         // Test with valid data but empty links
         result = DAG_CBOR.nodeCbor(data, new bytes[](0));
         assertEq(result, data, "File node should return data unchanged");

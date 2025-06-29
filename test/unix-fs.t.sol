@@ -452,21 +452,21 @@ contract UnixFSTest is Test {
         // Test that directory function handles mismatched array lengths gracefully (GiGo)
         bytes[] memory hashes = new bytes[](3);
         string[] memory names = new string[](2);
-        
+
         hashes[0] = hex"1220ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
         hashes[1] = hex"1220b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9";
         hashes[2] = hex"1220c4ca4238a0b923820dcc509a6f75849b";
         names[0] = "file1.txt";
         names[1] = "file2.txt";
-        
+
         bytes memory result = UnixFS.directory(hashes, names);
-        
+
         // Should not revert, should use minimum length (2)
         assertTrue(result.length > 0, "Directory with mismatched arrays should not be empty");
-        
+
         // Should contain directory type byte
         assertEq(uint8(result[result.length - 1]), UnixFS.DIRECTORY, "Directory should end with directory type");
-        
+
         console.log("Directory with mismatched arrays (3 hashes, 2 names) - used 2 links:");
         console.logBytes(result);
     }

@@ -7,12 +7,12 @@ pragma solidity ^0.8.25;
  * @notice Variable-length integer encoding and decoding for multiformats
  * @dev This library implements the varint encoding scheme used in multiformats,
  * Protocol Buffers, and other binary serialization formats.
- * 
+ *
  * Varint encoding uses the most significant bit (MSB) as a continuation bit:
  * - If MSB is 0, the byte is the last byte of the varint
  * - If MSB is 1, more bytes follow
  * - The remaining 7 bits of each byte contain the actual data
- * 
+ *
  * This implementation supports up to 4-byte varints (28 bits), which is
  * sufficient for most multiformat use cases.
  */

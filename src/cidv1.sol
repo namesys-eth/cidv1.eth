@@ -6,12 +6,12 @@ pragma solidity ^0.8.25;
  * @author cidv1.eth
  * @notice Content Identifier (CID) version 1 implementation for IPFS/IPLD
  * @dev This contract provides basic CIDv1 encoding and decoding functionality
- * 
+ *
  * CIDv1 is a self-describing content-addressed identifier that includes:
  * - Version prefix (0x01)
  * - Multicodec identifier
  * - Multihash digest
- * 
+ *
  * @custom:security-contact security@cidv1.eth
  * @custom:website https://cidv1.eth
  * @custom:license WTFPL.ETH
@@ -38,7 +38,7 @@ contract CIDv1 {
     function decode(bytes memory data) public pure returns (bytes memory) {
         require(data.length > 0, "Empty data");
         require(data[0] == 0x01, "Invalid CIDv1 version");
-        
+
         bytes memory result = new bytes(data.length - 1);
         for (uint256 i = 1; i < data.length; i++) {
             result[i - 1] = data[i];

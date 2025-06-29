@@ -61,7 +61,7 @@ contract DagPbTest is Test {
         bytes memory result = DAG_PB.encodeTag(1, DAG_PB.WIRE_TYPE_VARINT);
         assertEq(result.length, 1, "Tag should be 1 byte for small values");
         assertEq(uint256(uint8(result[0])), 0x08, "Should be (1 << 3) | 0 = 8");
-        
+
         result = DAG_PB.encodeTag(15, DAG_PB.WIRE_TYPE_LENGTH_DELIMITED);
         assertEq(uint256(uint8(result[0])), 0x7a, "Should be (15 << 3) | 2 = 122");
     }
@@ -70,10 +70,10 @@ contract DagPbTest is Test {
         // Test encodeString function
         bytes memory result = DAG_PB.encodeString(2, "Hello");
         assertTrue(result.length > 0, "String encoding should not be empty");
-        
+
         // Should contain: tag + length + string
         assertEq(uint256(uint8(result[0])), 0x12, "Should be (2 << 3) | 2 = 18");
-        
+
         // Decode the length
         (uint256 length,) = TestHelpers.decodeVarint(result, 1);
         assertEq(length, 5, "String length should be 5");
@@ -84,10 +84,10 @@ contract DagPbTest is Test {
         bytes memory data = hex"1234567890abcdef";
         bytes memory result = DAG_PB.encodeBytes(3, data);
         assertTrue(result.length > 0, "Bytes encoding should not be empty");
-        
+
         // Should contain: tag + length + data
         assertEq(uint256(uint8(result[0])), 0x1a, "Should be (3 << 3) | 2 = 26");
-        
+
         // Decode the length
         (uint256 length,) = TestHelpers.decodeVarint(result, 1);
         assertEq(length, 8, "Data length should be 8");
@@ -97,10 +97,10 @@ contract DagPbTest is Test {
         // Test encodeUint64 function
         bytes memory result = DAG_PB.encodeUint64(4, 12345);
         assertTrue(result.length > 0, "Uint64 encoding should not be empty");
-        
+
         // Should contain: tag + varint value
         assertEq(uint256(uint8(result[0])), 0x20, "Should be (4 << 3) | 0 = 32");
-        
+
         // Decode the value
         (uint256 value,) = TestHelpers.decodeVarint(result, 1);
         assertEq(value, 12345, "Value should match input");
@@ -111,10 +111,10 @@ contract DagPbTest is Test {
         bytes memory hash = hex"1234567890abcdef";
         string memory name = "test.txt";
         uint256 tsize = 1024;
-        
+
         bytes memory result = DAG_PB.encodePBLink(hash, name, tsize);
         assertTrue(result.length > 0, "PBLink encoding should not be empty");
-        
+
         // Should contain hash field, name field, and tsize field
         assertEq(uint256(uint8(result[0])), 0x0a, "Should start with hash field tag");
     }
@@ -124,10 +124,10 @@ contract DagPbTest is Test {
         bytes memory hash = hex"1234567890abcdef";
         string memory name = "test.txt";
         uint256 tsize = 0;
-        
+
         bytes memory result = DAG_PB.encodePBLink(hash, name, tsize);
         assertTrue(result.length > 0, "PBLink encoding should not be empty");
-        
+
         // Should contain hash field and name field, but no tsize field
         assertEq(uint256(uint8(result[0])), 0x0a, "Should start with hash field tag");
     }
@@ -138,10 +138,10 @@ contract DagPbTest is Test {
         bytes[] memory links = new bytes[](2);
         links[0] = hex"6c696e6b3164617461"; // "link1data" in hex
         links[1] = hex"6c696e6b3264617461"; // "link2data" in hex
-        
+
         bytes memory result = DAG_PB.encodePBNode(data, links);
         assertTrue(result.length > 0, "PBNode encoding should not be empty");
-        
+
         // Should contain links followed by data
         assertTrue(result.length > data.length, "Should contain links and data");
     }
@@ -150,7 +150,7 @@ contract DagPbTest is Test {
         // Test encodePBNode with empty links array
         bytes memory data = hex"1234567890abcdef";
         bytes[] memory links = new bytes[](0);
-        
+
         bytes memory result = DAG_PB.encodePBNode(data, links);
         assertEq(result, data, "Should return data when no links");
     }
@@ -159,7 +159,7 @@ contract DagPbTest is Test {
         // Test rawFile function
         bytes memory data = bytes("Hello World");
         bytes memory result = DAG_PB.rawFile(data);
-        
+
         // rawFile should return data as-is
         assertEq(result, data, "rawFile should return data unchanged");
     }
@@ -169,10 +169,10 @@ contract DagPbTest is Test {
         bytes memory hash = hex"1234567890abcdef";
         string memory name = "test.txt";
         uint256 tsize = 1024;
-        
+
         bytes memory result = DAG_PB.link(hash, name, tsize);
         assertTrue(result.length > 0, "Link encoding should not be empty");
-        
+
         // Should contain hash, name, and tsize fields
         assertEq(uint256(uint8(result[0])), 0x0a, "Should start with hash field tag");
     }
@@ -181,10 +181,10 @@ contract DagPbTest is Test {
         // Test link function without tsize parameter (overload)
         bytes memory hash = hex"1234567890abcdef";
         string memory name = "test.txt";
-        
+
         bytes memory result = DAG_PB.link(hash, name);
         assertTrue(result.length > 0, "Link encoding should not be empty");
-        
+
         // Should contain hash and name fields, but no tsize field
         assertEq(uint256(uint8(result[0])), 0x0a, "Should start with hash field tag");
     }
@@ -193,10 +193,10 @@ contract DagPbTest is Test {
         // Test that both link overloads produce consistent results
         bytes memory hash = hex"1234567890abcdef";
         string memory name = "test.txt";
-        
+
         bytes memory result1 = DAG_PB.link(hash, name);
         bytes memory result2 = DAG_PB.link(hash, name, 0);
-        
+
         assertEq(result1, result2, "Both link overloads should produce same result for tsize=0");
     }
 
@@ -204,17 +204,17 @@ contract DagPbTest is Test {
         // Test directory function with multiple links
         bytes memory hash1 = hex"1234567890abcdef";
         bytes memory hash2 = hex"fedcba0987654321";
-        
+
         bytes memory link1 = DAG_PB.link(hash1, "file1.txt", 100);
         bytes memory link2 = DAG_PB.link(hash2, "file2.txt", 200);
-        
+
         bytes[] memory links = new bytes[](2);
         links[0] = link1;
         links[1] = link2;
-        
+
         bytes memory result = DAG_PB.directory(links);
         assertTrue(result.length > 0, "Directory encoding should not be empty");
-        
+
         // Directory should contain PB_DIR_TYPE + links, but the structure is complex
         // Just verify it's not empty and has reasonable length
         assertTrue(result.length > 10, "Directory should have substantial content");
@@ -223,10 +223,10 @@ contract DagPbTest is Test {
     function test_DirectoryWithEmptyLinks() public pure {
         // Test directory function with empty links array
         bytes[] memory links = new bytes[](0);
-        
+
         bytes memory result = DAG_PB.directory(links);
         assertTrue(result.length > 0, "Directory encoding should not be empty");
-        
+
         // Should contain only PB_DIR_TYPE
         assertEq(uint256(uint8(result[0])), 0x0a, "Should start with directory type");
     }

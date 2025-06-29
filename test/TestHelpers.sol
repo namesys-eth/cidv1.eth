@@ -6,7 +6,7 @@ pragma solidity ^0.8.25;
  * @author cidv1.eth
  * @notice Helper functions for testing multiformat implementations
  * @dev This library contains utility functions used across multiple test files
- * 
+ *
  * @custom:security-contact security@cidv1.eth
  * @custom:website https://cidv1.eth
  * @custom:license WTFPL.ETH
@@ -40,4 +40,4 @@ library TestHelpers {
 
         revert("Invalid varint");
     }
-} 
+}

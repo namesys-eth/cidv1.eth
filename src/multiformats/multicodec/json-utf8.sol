@@ -11,16 +11,16 @@ import {LibString} from "solady/utils/LibString.sol";
  * @dev This library implements JSON UTF-8 encoding as defined in the multiformats
  * specification. It provides standardized encoding for JSON data with UTF-8
  * encoding and various hash function options.
- * 
+ *
  * JSON UTF-8 encoding supports:
  * - Raw encoding (no hashing)
  * - SHA-256 hashing
  * - Keccak-256 hashing
  * - Key-value pair JSON stringification helpers
- * 
+ *
  * The library follows the multiformats specification for JSON UTF-8 codec
  * values and provides a clean, minimal API for encoding operations.
- * 
+ *
  * @custom:security-contact security@cidv1.eth
  * @custom:website https://cidv1.eth
  * @custom:license WTFPL.ETH
@@ -85,7 +85,7 @@ library JSON_UTF8 {
      * @dev Format: {"key":"0x<hex-value>"}
      */
     function kvJsonHex(KeyValue memory kv) internal pure returns (string memory) {
-       return string(abi.encodePacked('{"', kv.key, '":"0x', LibString.toHexStringNoPrefix(kv.value), '"}'));
+        return string(abi.encodePacked('{"', kv.key, '":"0x', LibString.toHexStringNoPrefix(kv.value), '"}'));
     }
 
     /**
@@ -96,16 +96,7 @@ library JSON_UTF8 {
      * @dev Format: {"key":"<prefix><hex-value>"}
      */
     function kvJsonHexPrefixed(KeyValue memory kv, bytes memory prefix) internal pure returns (string memory) {
-       return string(
-            abi.encodePacked(
-                '{"',
-                kv.key,
-                '":"',
-                prefix,
-                LibString.toHexStringNoPrefix(kv.value),
-                '"}'
-            )
-        );
+        return string(abi.encodePacked('{"', kv.key, '":"', prefix, LibString.toHexStringNoPrefix(kv.value), '"}'));
     }
 
     /**
@@ -116,6 +107,6 @@ library JSON_UTF8 {
      * @dev Assumes the value bytes represent a valid UTF-8 string
      */
     function kvJsonString(KeyValue memory kv) internal pure returns (string memory) {
-       return string(abi.encodePacked('{"', kv.key, '":"', string(kv.value), '"}'));
+        return string(abi.encodePacked('{"', kv.key, '":"', string(kv.value), '"}'));
     }
 }

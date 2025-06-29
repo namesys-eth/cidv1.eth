@@ -10,15 +10,15 @@ import {Varint} from "../varint.sol";
  * @dev This library implements Keccak-256 multihash encoding as defined in
  * the multihash specification. It provides a standardized way to encode
  * Keccak-256 hashes with their multihash prefix.
- * 
+ *
  * Multihash format:
  * - First byte: hash function code (0x1b for Keccak-256)
  * - Second byte: hash length (0x20 = 32 bytes for Keccak-256)
  * - Remaining bytes: the actual hash digest
- * 
+ *
  * Note: Keccak-256 is the hash function used by Ethereum and is different
  * from SHA-3, despite being based on the same algorithm.
- * 
+ *
  * @custom:security-contact security@cidv1.eth
  * @custom:website https://cidv1.eth
  * @custom:license WTFPL.ETH

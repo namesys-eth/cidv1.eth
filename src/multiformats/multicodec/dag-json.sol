@@ -13,21 +13,21 @@ import "../utils.sol";
  * @dev This library implements DAG-JSON encoding as defined in the multiformats
  * specification. It provides standardized encoding for JSON data that represents
  * directed acyclic graphs (DAGs) with IPLD links.
- * 
+ *
  * ⚠️  WARNING: DAG-JSON is string-based and inefficient compared to JSON-UTF8.
  * For most use cases, prefer JSON_UTF8.encode() which provides binary encoding
  * and is more gas-efficient. DAG-JSON should only be used when you specifically
  * need the DAG-JSON format for IPLD compatibility.
- * 
+ *
  * DAG-JSON encoding supports:
  * - Basic JSON encoding with canonical prefix (0x0129)
  * - IPLD link creation and formatting
  * - Map encoding for key-value pairs
  * - Key-value pair JSON stringification helpers
- * 
+ *
  * DAG-JSON is used in IPFS and IPLD for representing structured data with
  * content-addressed links. It extends JSON with IPLD link syntax.
- * 
+ *
  * @custom:security-contact security@cidv1.eth
  * @custom:website https://cidv1.eth
  * @custom:license WTFPL.ETH

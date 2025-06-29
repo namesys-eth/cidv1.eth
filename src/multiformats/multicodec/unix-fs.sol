@@ -58,15 +58,15 @@ library UnixFS {
      */
     function directory(bytes[] memory hashes, string[] memory names) internal pure returns (bytes memory result) {
         bytes memory unixfsData = encodeUnixFSData(DIRECTORY, "", 0, new uint64[](0));
-        
+
         // Use minimum length to handle mismatched arrays gracefully (GiGo)
         uint256 minLength = hashes.length < names.length ? hashes.length : names.length;
         bytes[] memory links = new bytes[](minLength);
-        
+
         for (uint256 i = 0; i < minLength; i++) {
             links[i] = DAG_PB.encodePBLink(hashes[i], names[i], 0);
         }
-        
+
         return DAG_PB.encodePBNode(unixfsData, links);
     }
 

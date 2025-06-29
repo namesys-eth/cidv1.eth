@@ -10,15 +10,15 @@ import {Varint} from "../varint.sol";
  * @dev This library implements raw binary encoding as defined in the multiformats
  * specification. It provides standardized encoding for raw binary data with
  * various hash function options.
- * 
+ *
  * Raw binary encoding supports:
  * - Raw encoding (no hashing)
  * - SHA-256 hashing
  * - Keccak-256 hashing
- * 
+ *
  * The library follows the multiformats specification for raw binary codec
  * values and provides a clean, minimal API for encoding operations.
- * 
+ *
  * @custom:security-contact security@cidv1.eth
  * @custom:website https://cidv1.eth
  * @custom:license WTFPL.ETH
